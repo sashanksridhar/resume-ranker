@@ -1,0 +1,79 @@
+openapi: 3.0.0
+info:
+  title: File Upload API
+  description: Upload PDF or DOCX files and extract text
+  version: 1.0.0
+servers:
+  - url: http://localhost:5000
+paths:
+  /extract-criteria:
+    post:
+      summary: Upload a file
+      description: Upload a PDF or DOCX file and extract criteria
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: The file to upload
+      responses:
+        "200":
+          description: File uploaded successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  filename:
+                    type: string
+                  text:
+                    type: string
+        "400":
+          description: Invalid request
+
+  /score-resumes:
+    post:
+      summary: Score resumes with criteria
+      description: Uploads resumes (PDF/DOCX) and checks them against the provided criteria
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                criteria:
+                  type: string
+                  description: JSON string containing criteria list
+                files:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                  description: Upload one or more PDF/DOCX files
+      responses:
+        "200":
+          description: List of matched resumes
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  matched_files:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        filename:
+                          type: string
+                        matched:
+                          type: array
+                          items:
+                            type: string
+        "400":
+          description: Invalid input
